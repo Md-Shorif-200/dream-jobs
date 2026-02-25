@@ -1,36 +1,30 @@
 "use client";
 import {
   Card,
-
   CardContent,
   CardDescription,
-
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { LogInAction } from "@/lib/ServerActions/Auth/LogInAction";
+import { toast } from "sonner";
 
 //--------------- types
 interface RegisterFormType {
-
   email: string;
   password: string;
-
 }
 
 const page = () => {
   const [formData, setFormData] = useState<RegisterFormType>({
-
     email: "",
     password: "",
-
   });
 
   const handleInputChange = (name: string, value: string) => {
@@ -40,27 +34,40 @@ const page = () => {
     }));
   };
 
-  
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async(e: FormEvent) => {
     e.preventDefault();
 
-    console.log(formData);
     try {
-    } catch (error) {}
+      const logInData = {
+        email: formData.email.toLocaleLowerCase().trim(),
+        password: formData.password,
+      };
+
+
+
+      const result = await LogInAction(logInData)
+
+  if(result.success == true) {
+         toast.success(result.message)
+       }else {
+        toast.error(result.message)
+       }
+    } catch (error) {
+      console.log(error);
+    }
   };
-  
+
   return (
     <main className="min-h-screen bg-background flex items-center justify-center p-4 ">
       <Card className="w-full max-w-md ">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Your Dream </CardTitle>
 
-          <CardDescription>Log In  to get started</CardDescription>
+          <CardDescription>Log In to get started</CardDescription>
           {/* <CardAction>Card Action</CardAction> */}
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} action="" className="space-y-6">
-         
             {/* email  */}
             <div className="space-y-2">
               <Label htmlFor="">Email</Label>
@@ -77,8 +84,6 @@ const page = () => {
               />
             </div>
 
-       
-
             {/* password  */}
             <div className="space-y-2">
               <Label htmlFor="">Password</Label>
@@ -94,7 +99,6 @@ const page = () => {
                 required
               />
             </div>
-          
 
             {/* Submit Button */}
             <Button type="submit" className="w-full">

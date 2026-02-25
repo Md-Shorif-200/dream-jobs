@@ -1,10 +1,10 @@
 "use client";
 import {
   Card,
-  CardAction,
+
   CardContent,
   CardDescription,
-  CardFooter,
+
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { RegistrationAction } from "@/lib/ServerActions/RegistrationAction";
+import { RegistrationAction } from "@/lib/ServerActions/Auth/RegistrationAction";
 import { toast } from "sonner";
 
 //--------------- types

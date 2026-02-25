@@ -1,7 +1,7 @@
 "use server";
 import argon2 from "argon2";
 
-import { dbCollection, dbConnect } from "../mongodb";
+import { dbCollection, dbConnect } from "../../../Config/mongodb";
 
 interface registerDataType {
   name: string;
@@ -19,10 +19,17 @@ export const RegistrationAction = async (data: registerDataType) => {
 
     const userCollection = dbConnect(dbCollection.Users);
 
-    const existingUser = await userCollection.findOne({ email: email });
+    const existingUser = await userCollection.findOne({ 
+      $or : [{email},{userName}]
+     });
 
-    if (existingUser) {
-      return { success: false, message: "Email already exists" };
+       if (existingUser) {
+      if (existingUser.email === email) {
+        return { success: false, message: "Email already exists" };
+      }
+      if (existingUser.userName === userName) {
+        return { success: false, message: "Username already exists" };
+      }
     }
 
     const result = await userCollection.insertOne({
