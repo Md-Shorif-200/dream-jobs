@@ -2,18 +2,23 @@
 import argon2 from "argon2";
 
 import { dbCollection, dbConnect } from "../../../Config/mongodb";
+import { RegisterUserData, registerUserSchema } from "../auth.schema";
 
-interface registerDataType {
-  name: string;
-  userName: string;
-  email: string;
-  password: string;
-  role: "applicant" | "employer";
+
+
+export const RegistrationAction = async (data: RegisterUserData) => {
+  
+  try {
+
+     const res = registerUserSchema.safeParse(data);
+
+if (!res.success) {
+  console.log('server : ',res.error);
+  return { success: false, message: res.error.issues[0].message };
 }
 
-export const RegistrationAction = async (data: registerDataType) => {
-  try {
-    const { name, userName, email, password, role } = data;
+const validateData = res.data;
+    const { name, userName, email, password, role } = validateData;
 
     const hashPassword = await argon2.hash(password);
 

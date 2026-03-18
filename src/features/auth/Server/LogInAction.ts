@@ -1,6 +1,7 @@
 "use server";
 import { dbCollection, dbConnect } from "@/Config/mongodb";
 import argon2 from "argon2";
+import { createSessionAndSetCookies } from "./use-case/session";
 interface loginDataType {
   email: string;
   password: string;
@@ -32,6 +33,11 @@ export const LogInAction = async (data: loginDataType) => {
         message: "invalid password",
       };
     }
+
+const userId = existingUser._id.toString();
+      await createSessionAndSetCookies(userId);
+
+
     //  login success
     return {
       success: true,
