@@ -3,6 +3,7 @@ import argon2 from "argon2";
 
 import { dbCollection, dbConnect } from "../../../Config/mongodb";
 import { RegisterUserData, registerUserSchema } from "../auth.schema";
+import { createSessionAndSetCookies } from "./use-case/session";
 
 
 
@@ -45,7 +46,11 @@ const validateData = res.data;
       role,
     });
 
+
+ 
+    
     if (result.insertedId) {
+      await createSessionAndSetCookies(result.insertedId.toString());
       return { success: true, message: "User registered successfully" };
     } else {
       return { success: false, message: "Failed to register user" };
