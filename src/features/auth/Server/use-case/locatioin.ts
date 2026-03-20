@@ -1,3 +1,4 @@
+"use server"
 import { headers } from "next/headers";
 
 const IP_HEADER_PRIORITY = [

@@ -19,6 +19,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginUserData, loginUserSchema } from "@/features/auth/auth.schema";
 import { LogInAction } from "../Server/LogInAction";
+import { useRouter } from "next/navigation";
+import { getCurrentUser } from "../Server/auth.queries";
 
 const LoginForm: React.FC = () => {
   const {
@@ -31,16 +33,28 @@ const LoginForm: React.FC = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const router =  useRouter();
 
   const onSubmit = async (data: LoginUserData) => {
     try {
       const result = await LogInAction(data);
 
-     if(result.success == true) {
-         toast.success(result.message)
-       }else {
-        toast.error(result.message)
-       }
+      if (result.status == 'SUCCESS') {
+      toast.success(result.message);
+
+      // Get current user after login
+      const user = await getCurrentUser();
+
+      // Redirect based on role
+      if (user?.role === "employer") {
+       router.push("/employer-dashboard");
+      } else {
+        router.push("/dashboard");
+      }
+
+    } else {
+      toast.error(result.message);
+    }
     } catch (error) {}
   };
 

@@ -40,13 +40,13 @@ const userId = existingUser._id.toString();
 
     //  login success
     return {
-      success: true,
+      status: 'SUCCESS',
       message: "Login successful",
       user: existingUser,
     };
 
   } catch (error) {
     console.error(error);
-    return { success: false, message: "Server error" };
+    return { status: 'FAILED', message: "Server error" };
   }
 };

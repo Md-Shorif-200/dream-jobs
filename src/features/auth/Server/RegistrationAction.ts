@@ -51,12 +51,12 @@ const validateData = res.data;
     
     if (result.insertedId) {
       await createSessionAndSetCookies(result.insertedId.toString());
-      return { success: true, message: "User registered successfully" };
+      return { status: 'SUCCESS', message: "User registered successfully" };
     } else {
-      return { success: false, message: "Failed to register user" };
+      return { status: 'FAILD', message: "Failed to register user" };
     }
   } catch (error) {
     console.error("Registration error:", error);
-    return { success: false, message: "Server error" };
+    return { status: 'FAILD', message: "Server error" };
   }
 };

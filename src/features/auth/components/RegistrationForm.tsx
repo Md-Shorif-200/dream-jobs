@@ -28,6 +28,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { RegistrationAction } from "@/features/auth/Server/RegistrationAction";
+import { useRouter } from "next/navigation";
 
 const RegistrationForm = () => {
   const {
@@ -43,13 +44,22 @@ const RegistrationForm = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const router =  useRouter();
 
  const onSubmit = async (data: RegisterUserWithConfirmData) => {
   try {
     const result = await RegistrationAction(data);
 
-    if (result.success) {
+    if (result.status == 'SUCCESS') {
       toast.success(result.message);
+
+      // Redirect based on role
+      if (data.role === "employer") {
+       router.push("/employer-dashboard");
+      } else {
+        router.push("/dashboard");
+      }
+
     } else {
       toast.error(result.message);
     }

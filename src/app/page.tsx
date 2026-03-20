@@ -11,6 +11,7 @@ const page = async () => {
   return (
     <div>
          <Button>Click me</Button>
+          <h1>{user?.name} </h1>
     </div>
   )
 }
