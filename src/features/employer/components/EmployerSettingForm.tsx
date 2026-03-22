@@ -1,0 +1,234 @@
+"use client"
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Controller, useForm } from "react-hook-form";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Briefcase,
+  Building2,
+  Calendar,
+  FileText,
+  Globe,
+  Loader,
+  Loader2,
+  MapPin,
+  Upload,
+  X,
+} from "lucide-react";
+// import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { updateEmployerProfileAction } from "../server/employer.action";
+import { toast } from "sonner";
+import {
+  EmployerProfileData,
+  employerProfileSchema,
+  organizationTypes,
+  teamSizes,
+} from "../employers.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const EmployerSettingForm = () => {
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors, isDirty, isSubmitting },
+  } = useForm<EmployerProfileData>({
+    resolver: zodResolver(employerProfileSchema),
+  });
+
+  const handleFormSubmit = async (data: EmployerProfileData) => {
+    console.log("data: ", data);
+
+    try {
+      const result = await updateEmployerProfileAction(data);
+
+      if (result.status == "SUCCESS") {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Server error");
+    }
+  };
+
+  return (
+    <Card className="w-3/4 ">
+      <CardContent>
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="companyName">Company Name *</Label>
+            <div className="relative">
+              <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                id="companyName"
+                type="text"
+                placeholder="Enter company name"
+                className={`pl-10 ${errors.companyName ? "border-destructive" : ""} `}
+                {...register("companyName")}
+              />
+            </div>
+            {errors.companyName && (
+              <p className="text-sm text-destructive">
+                {errors.companyName.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Controller
+              name="organizationType"
+              control={control}
+              render={({ field }) => (
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="pl-10 w-full ">
+                      <SelectValue placeholder="Select organization type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {organizationTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {/* {capitalizeWords(type)} */}
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            />
+
+            {errors.organizationType && (
+              <p className="text-sm text-destructive">
+                {errors.organizationType.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="teamSize">Team Size *</Label>
+            <Controller
+              name="teamSize"
+              control={control}
+              render={({ field }) => (
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="pl-10 w-full ">
+                      <SelectValue placeholder="Select Team Size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {teamSizes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {/* {capitalizeWords(type)} */}
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            />
+            {errors.teamSize && (
+              <p className="text-sm text-destructive">
+                {errors.teamSize.message}
+              </p>
+            )}
+          </div>
+
+          {/* Year of Establishment and Location - Two columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="yearOfEstablishment">
+                Year of Establishment *
+              </Label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="yearOfEstablishment"
+                  type="text"
+                  placeholder="e.g., 2020"
+                  maxLength={4}
+                  className={`pl-10 ${errors.companyName ? "border-destructive" : ""} `}
+                  {...register("yearOfEstablishment")}
+                />
+              </div>
+              {errors.yearOfEstablishment && (
+                <p className="text-sm text-destructive">
+                  {errors.yearOfEstablishment.message}
+                </p>
+              )}
+            </div>
+
+            {/* Year of Establishment and Location - Two columns */}
+            <div className="space-y-2">
+              <Label htmlFor="location">Location *</Label>
+
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="location"
+                  type="text"
+                  placeholder="e.g., Pune, Bangalore"
+                  className={`pl-10 ${errors.companyName ? "border-destructive" : ""} `}
+                  {...register("location")}
+                />
+              </div>
+            </div>
+            {errors.location && (
+              <p className="text-sm text-destructive">
+                {errors.location.message}
+              </p>
+            )}
+          </div>
+          {/* Website URL */}
+          <div className="space-y-2">
+            <Label htmlFor="websiteUrl">Website URL (Optional)</Label>
+            <div className="relative">
+              <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                id="websiteUrl"
+                type="text"
+                placeholder="https://www.yourcompany.com"
+                className={`pl-10 ${errors.companyName ? "border-destructive" : ""} `}
+                {...register("websiteUrl")}
+              />
+            </div>
+            {/* {errors.websiteUrl && (
+              <p className="text-sm text-destructive">
+                {errors.websiteUrl.message}
+              </p>
+            )} */}
+          </div>
+          <div className="flex items-center gap-4 pt-4">
+            <Button type="submit">
+              {isSubmitting && <Loader className="w-4 h-4 animate-spin" />}
+              {isSubmitting ? "Saving Changes..." : "Save Changes"}
+            </Button>
+
+            {!isDirty && (
+              <p className="text-sm text-muted-foreground">
+                No changes to save
+              </p>
+            )}
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default EmployerSettingForm;

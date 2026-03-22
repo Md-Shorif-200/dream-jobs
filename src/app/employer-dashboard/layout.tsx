@@ -2,6 +2,7 @@
 import { getCurrentUser } from "@/features/auth/Server/auth.queries";
 import { redirect } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
+import EmployerSidebar from "@/features/employer/components/employer-sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,6 +23,8 @@ export default async function RootLayout({
 
   const user =  await getCurrentUser();
 
+   console.log(user)
+
      if(!user) return   redirect("/log-in")
      if(user?.role !== "employer") return   redirect("/dashboard")
      
@@ -31,7 +34,10 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+       <div className="flex min-h-screen bg-background ">
+      <EmployerSidebar />
+      <main className="container mx-auto mt-5 ml-70 mr-5">{children}</main>
+    </div>
 
 
       </body>

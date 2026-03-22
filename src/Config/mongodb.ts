@@ -3,6 +3,9 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 export const dbCollection = {
   Users: "Users",
     Sessions: "Sessions",
+    Employers : "Employers",
+    Applicants : "Applicants",
+
 };
 
 export const dbConnect = (collectionName: string) => {
